@@ -1,71 +1,51 @@
-import { useEffect, useReducer, useState } from 'react';
-import sudoku, { randomIndexes } from '../lib/sudoku';
+import { useEffect, useState } from 'react';
+import sudoku, { randomIndexes, compareSudokuArrays } from '../lib/sudoku';
 import { SudokuNumberBoxFilled, SudokuNumberBoxInput } from './SudokuNumberBoxes';
-
-const initialNumbersState = {}
-
-const numbersReducer = (state, action) => {
-    const row = action.payload.row?.toString();
-    const column = action.payload.column?.toSTring();
-    switch (action.type) {
-        case "value":
-            if (state[row] && state[row][column]) {
-                state[row][column].value = action.payload.value;
-            }
-            return state;
-        case "input":
-            if (state[row] && state[row][column]) {
-                state[row][column].input = action.payload.input;
-            }
-            return state;
-        case "init": {
-            const newState = {}
-            for (let i = 0; i < action.payload.size; i++) {
-                newState[i.toString()] = {}
-                for (let j = 0; j < action.payload.size; j++) {
-                    newState[i.toString()][j.toString()] = {}
-                }
-            }
-            return newState;
-        }
-        default:
-            return state;
-    }
-}
 
 export default function SudokuBox() {
     const [sudokuNumbers, setSudokuNumbers] = useState([]);
-    const [displayedNumbers, setDisplayedNumbers] = useState();
+    const [displayedNumbers, setDisplayedNumbers] = useState([]);
     const [selected, setSelected] = useState(null);
-    const [numbersState, dispatch] = useReducer(numbersReducer, initialNumbersState);
+    const [inputNumbers, setInputNumbers] = useState([]);
+    const [grade, setGrade] = useState(null);
 
     useEffect(() => {
         sudoku().then(result => {
             setSudokuNumbers(result);
-            setDisplayedNumbers(randomIndexes(result, 30));
+            setDisplayedNumbers(randomIndexes(result, 80));
         });
     }, [])
 
     useEffect(() => {
-        dispatch({ type: "init", payload: { size: sudokuNumbers.length } });
+        console.log(sudokuNumbers);
     }, [sudokuNumbers])
 
     useEffect(() => {
-        console.log(numbersState);
-        if (!Object.keys(numbersState).length) return;
-        for (let row = 0; row < sudokuNumbers.length; row++) {
-            for (let column = 0; column < sudokuNumbers.length; column++) {
-                dispatch({
-                    type: "value",
-                    payload: {
-                        row: row,
-                        column: column,
-                        value: sudokuNumbers[row][column]
-                    }
-                });
+        if (!sudokuNumbers.length) return;
+        if (!displayedNumbers.length) return;
+        setInputNumbers(inputNumbers => {
+            for (let i = 0; i < sudokuNumbers.length; i++) {
+                const row = []
+                for (let j = 0; j < sudokuNumbers.length; j++) {
+                    row.push(0);
+                }
+                inputNumbers.push(row);
             }
-        }
-    }, [numbersState])
+            displayedNumbers.forEach(([row, column]) => {
+                inputNumbers[row][column] = sudokuNumbers[row][column];
+            })
+            return [...inputNumbers]
+        })
+    }, [sudokuNumbers, displayedNumbers])
+
+    useEffect(() => {
+        if (!inputNumbers.length) return;
+        compareSudokuArrays(sudokuNumbers, inputNumbers, setGrade);
+    }, [inputNumbers]);
+
+    useEffect(() => {
+        console.log(grade);
+    }, [grade])
 
     return (
         <>
@@ -96,7 +76,7 @@ export default function SudokuBox() {
                                             className={listOfClasses + " input-box"}
                                             indexes={indexes}
                                             setSelected={setSelected}
-                                            dispatchNumber={dispatch}
+                                            setInputNumbers={setInputNumbers}
                                         />
                                     }
                                 })}

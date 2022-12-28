@@ -54,3 +54,13 @@ export function randomIndexes(squrArray, numOfValues) {
     }
     return indexes;
 }
+
+export function compareSudokuArrays(sudoku, input, setGrade) {
+    for (let i = 0; i < sudoku.length; i++) {
+        for (let j = 0; j < sudoku[i].length; j ++) {
+            if (!input[i][j]) return setGrade(null);
+            if (input[i][j] !== sudoku[i][j]) return setGrade(false);
+        }
+    }
+    setGrade(true);
+}
