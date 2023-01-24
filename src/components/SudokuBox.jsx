@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import sudoku, { randomIndexes, compareSudokuArrays } from '../lib/sudoku';
 import { SudokuNumberBoxFilled, SudokuNumberBoxInput } from './SudokuNumberBoxes';
 
-export default function SudokuBox() {
+export default function SudokuBox(props) {
     const [sudokuNumbers, setSudokuNumbers] = useState([]);
     const [displayedNumbers, setDisplayedNumbers] = useState([]);
     const [selected, setSelected] = useState(null);
@@ -12,13 +12,9 @@ export default function SudokuBox() {
     useEffect(() => {
         sudoku().then(result => {
             setSudokuNumbers(result);
-            setDisplayedNumbers(randomIndexes(result, 80));
+            setDisplayedNumbers(randomIndexes(result, 30));
         });
     }, [])
-
-    useEffect(() => {
-        console.log(sudokuNumbers);
-    }, [sudokuNumbers])
 
     useEffect(() => {
         if (!sudokuNumbers.length) return;
@@ -44,7 +40,7 @@ export default function SudokuBox() {
     }, [inputNumbers]);
 
     useEffect(() => {
-        console.log(grade);
+        props.setIsSolved(Boolean(grade));
     }, [grade])
 
     return (
