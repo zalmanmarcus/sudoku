@@ -65,3 +65,22 @@
 .selected-number-box {
   background-color: #03ecfc;
 }
+
+.on-screen-numbers > span {
+  padding: 3px 7px;
+  margin: 5px;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: bold;
+  background-color: #000;
+  border-radius: 15%;
+}
+
+.on-screen-numbers > span:hover {
+  cursor: pointer;
+}
+
+.on-screen-numbers > span:active {
+  background-color: #fff;
+  color: #000;
+}

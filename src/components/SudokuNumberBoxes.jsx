@@ -7,9 +7,10 @@ export function SudokuNumberBoxFilled(props) {
 }
 
 export function SudokuNumberBoxInput(props) {
-    const { setSelected, setInputNumbers, indexes, indexes: [row, column] } = props;
+    const { setSelected, setInputNumbers, indexes, indexes: [row, column], liftState } = props;
 
     const [inputNumber, setInputNumber] = useState(null);
+    const [hasListener, setHasListener] = useState(false);
 
     function keyPress(e) {
         if (e.keyCode > 48 && e.keyCode < 58) setInputNumber(e.key);
@@ -18,12 +19,24 @@ export function SudokuNumberBoxInput(props) {
 
     const onFocus = (e) => {
         setSelected(indexes);
-        e.target.addEventListener("keydown", keyPress, true);
+        liftState(state => {
+            return {
+                ...state,
+                setInputNumber
+            }
+        })
+        if (!hasListener) {
+            e.target.addEventListener("keydown", keyPress, true);
+            setHasListener(true);
+        }
     }
 
     const onBlur = (e) => {
-        setSelected(null);
-        e.target.removeEventListener("keydown", keyPress, true);
+        if (!(parseInt(e.relatedTarget?.id) > 0 && parseInt(e.relatedTarget?.id) < 10)) {
+            setSelected(null);
+            e.target.removeEventListener("keydown", keyPress, true);
+            setHasListener(false);
+        }
     }
 
     useEffect(() => {

@@ -4,10 +4,11 @@ import { SudokuNumberBoxFilled, SudokuNumberBoxInput } from './SudokuNumberBoxes
 
 export default function SudokuBox(props) {
     const [sudokuNumbers, setSudokuNumbers] = useState([]);
-    const [displayedNumbers, setDisplayedNumbers] = useState([]);
     const [selected, setSelected] = useState(null);
+    const [displayedNumbers, setDisplayedNumbers] = useState([]);
     const [inputNumbers, setInputNumbers] = useState([]);
     const [grade, setGrade] = useState(null);
+    const [liftedState, liftState] = useState({});
 
     useEffect(() => {
         sudoku().then(result => {
@@ -15,6 +16,12 @@ export default function SudokuBox(props) {
             setDisplayedNumbers(randomIndexes(result, 30));
         });
     }, [])
+
+    useEffect(() => {
+        props.liftState(state => {
+            return { ...state, setInputNumber: liftedState.setInputNumber }
+        })
+    }, [liftedState])
 
     useEffect(() => {
         if (!sudokuNumbers.length) return;
@@ -73,6 +80,7 @@ export default function SudokuBox(props) {
                                             indexes={indexes}
                                             setSelected={setSelected}
                                             setInputNumbers={setInputNumbers}
+                                            liftState={liftState}
                                         />
                                     }
                                 })}
