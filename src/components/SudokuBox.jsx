@@ -10,10 +10,12 @@ export default function SudokuBox(props) {
     const [grade, setGrade] = useState(null);
     const [liftedState, liftState] = useState({});
 
+    const amountDisplayed = calcLevelAmount(props.level)
+
     useEffect(() => {
         sudoku().then(result => {
             setSudokuNumbers(result);
-            setDisplayedNumbers(randomIndexes(result, 30));
+            setDisplayedNumbers(randomIndexes(result, amountDisplayed));
         });
     }, [])
 
@@ -91,4 +93,17 @@ export default function SudokuBox(props) {
             ) : <div>Loading...</div>}
         </>
     )
+}
+
+function calcLevelAmount(level) {
+    switch(level) {
+        case "EASY":
+            return 60;
+        case "MEDIUM":
+            return 50;
+        case "HARD":
+            return 40;
+        default:
+            return 30;
+    }
 }

@@ -84,3 +84,22 @@
   background-color: #fff;
   color: #000;
 }
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.menu button {
+  height: 100px;
+  width: 50%;
+  border-radius: 25px;
+  font-size: 2rem;
+}
+
+.menu button:hover {
+  cursor: pointer;
+}
